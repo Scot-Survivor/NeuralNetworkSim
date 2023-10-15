@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 project(NeuralNetworkSim)
-find_package(IntelDPCPP REQUIRED)
+find_package(IntelSYCL REQUIRED)
 cmake_policy(SET CMP0079 NEW)
 
 
