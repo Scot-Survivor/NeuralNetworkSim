@@ -32,17 +32,22 @@ Uint32 test(Uint32 interval, void *param) {
     auto modelData = (ModelData*) param;
     // Generate random 0-1 input array
     sycl::queue q = modelData->q;
-    std::cout << "Device : " << q.get_device().get_info<sycl::info::device::name>() << std::endl;
     if (modelData->inputs.empty()) {
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_real_distribution<float> dis(0.0f, 1.0f);
         for (uint64_t i = 0; i < modelData->input_size; i++) {
             modelData->inputs.push_back(dis(gen));
+            modelData->outputs.push_back(0.0f);  // Fill with 0's
         }
     }
+    try {
+        modelData->model.forward(q, modelData->inputs, modelData->outputs);
+    }
+    catch (sycl::exception const & e) {
+        std::cout << e.what() << std::endl;
+    }
 
-    modelData->model.forward(q, modelData->inputs, modelData->outputs);
     // COUT Outputs
     std::cout << "Outputs: ";
     for (float output : modelData->outputs) {
